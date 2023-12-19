@@ -75,7 +75,7 @@ Once parsec is set up from earlier, you can run this. For parsec we use the -s o
 ```bash
 sudo parsecmgmt -a run -p parsec.canneal -i simsmall -s "sudo cgexec -g memory:trial /home/kyle/pintool/pin -t /home/kyle/pintool/source/tools/ManualExamples/obj-intel64/pinatrace.so --" > /data1/kyle/simsmall_output.tr
 ```
-sudo parsecmgmt -a run -p parsec.canneal -i simmedium -s "sudo cgexec -g memory:trial /home/kyle/pintool/pin -t /home/kyle/pintool/source/tools/ManualExamples/obj-intel64/pinatrace.so --" > /data1/kyle/simmedium_output.tr
+<!-- sudo parsecmgmt -a run -p parsec.canneal -i simmedium -s "sudo cgexec -g memory:trial /home/kyle/pintool/pin -t /home/kyle/pintool/source/tools/ManualExamples/obj-intel64/pinatrace.so --" > /data1/kyle/simmedium_output.tr -->
 
 You will need to give absolute paths (i.e. substitute your username in `/home/kyle/`) and also create a `/data1/<username>` folder to pipe the results into, to avoid running out of disk space. You may also have to run this as root using `sudo su` and then re-sourcing `parsecmgmt`.
 
@@ -107,12 +107,13 @@ This formats the pinatrace into the trace file format for lrb
     python3 format_trace.py <pinatrace.out> <lrb_trace.tr>
 ```
 
-### Simulate LRU on the trace and report statistics
+#### Simulate LRU on the trace and report statistics
 ```bash
     python3 dataset_qualities.py <lrb_trace.tr> cache_size belady_boundary
 ```
 
 #### Simulating LRB on the trace
+In order to find parameters for cache size, you can run the parsec command for `simsmall` without PIN, augmented with `/usr/bin/time`, and divide by 2 (a typical allocation of RAM for page caches). In our case, we got 42mb of usage, so the cache size is set to 21mb. Memory window, Belady boundary, and batch size were scaled down semi-arbitrarily according to this decrease in cache size from the original LRB size of 64GB to 21mb.
 ```bash
 WEBCACHESIM_TRACE_DIR=/data1/kyle ./webcachesim/build/bin/webcachesim_cli lrb_trace.tr LRB 22020096 --memory_window=174762 --belady_boundary=174762 --batch_size=32768 > /data1/kyle/lrb_small.out
 ```
